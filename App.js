@@ -11,6 +11,7 @@ import React, {useState} from 'react';
 import {StyleSheet, View, Text, Button} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AuthContext = React.createContext();
 
@@ -43,11 +44,21 @@ const App: () => React$Node = () => {
 
   const authContext = React.useMemo(
     () => ({
-      signIn: async (data) => {
-        setIsSignedIn(true);
+      signIn: async () => {
+        try {
+          await AsyncStorage.setItem('token', '1');
+          setIsSignedIn(true);
+        } catch (e) {
+          // saving error
+        }
       },
       signOut: async () => {
-        setIsSignedIn(false);
+        try {
+          await AsyncStorage.removeItem('token');
+          setIsSignedIn(false);
+        } catch (e) {
+          // saving error
+        }
       },
     }),
     [],
