@@ -19,11 +19,9 @@ function CustomDrawerContent(props) {
   };
 
   const onItemParentPress = (key) => {
-    console.log('key', key);
     const filteredMainDrawerRoutes = props.drawerItems.find((e) => {
       return e.key === key;
     });
-    console.log(filteredMainDrawerRoutes);
     if (filteredMainDrawerRoutes.routes.length === 1) {
       const selectedRoute = filteredMainDrawerRoutes.routes[0];
       props.navigation.toggleDrawer();
@@ -60,6 +58,33 @@ function CustomDrawerContent(props) {
     );
   }
 
+  function renderFilteredItemsDrawer() {
+    return (
+      <View>
+        <TouchableOpacity
+          onPress={() => toggleMainDrawer()}
+          style={styles.backButtonRow}>
+          <Text style={[styles.backButtonText, styles.title]}>{'BACK'}</Text>
+        </TouchableOpacity>
+        {filteredItems.routes.map((route) => {
+          return (
+            <TouchableOpacity
+              key={route.routeName}
+              testID={route.routeName}
+              onPress={() =>
+                props.navigation.navigate(route.nav, {
+                  screen: route.routeName,
+                })
+              }
+              style={styles.item}>
+              <Text style={styles.title}>{route.title}</Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    );
+  }
+
   function renderLogoutBtn() {
     return (
       <View>
@@ -83,34 +108,7 @@ function CustomDrawerContent(props) {
             style={styles.logo}
           />
         </View>
-        {mainDrawer ? (
-          renderMainDrawer()
-        ) : (
-          <View>
-            <TouchableOpacity
-              onPress={() => toggleMainDrawer()}
-              style={styles.backButtonRow}>
-              <Text style={[styles.backButtonText, styles.title]}>
-                {'BACK'}
-              </Text>
-            </TouchableOpacity>
-            {filteredItems.routes.map((route) => {
-              return (
-                <TouchableOpacity
-                  key={route.routeName}
-                  testID={route.routeName}
-                  onPress={() =>
-                    props.navigation.navigate(route.nav, {
-                      screen: route.routeName,
-                    })
-                  }
-                  style={styles.item}>
-                  <Text style={styles.title}>{route.title}</Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-        )}
+        {mainDrawer ? renderMainDrawer() : renderFilteredItemsDrawer()}
       </SafeAreaView>
     </ScrollView>
   );
