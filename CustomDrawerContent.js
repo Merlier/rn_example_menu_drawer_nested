@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   StyleSheet,
   ScrollView,
@@ -10,15 +10,30 @@ import {
 } from 'react-native';
 
 function CustomDrawerContent(props) {
-  const onItemPress = (key) => {
+  const [mainDrawer, setMainDrawer] = useState(true);
+  const [filteredItems, setFilteredItems] = useState([]);
+
+  const toggleMainDrawer = () => {
+    setMainDrawer(true);
+    setFilteredItems([]);
+  };
+
+  const onItemParentPress = (key) => {
+    console.log('key', key);
     const filteredMainDrawerRoutes = props.drawerItems.find((e) => {
       return e.key === key;
     });
-    const selectedRoute = filteredMainDrawerRoutes.route;
-    props.navigation.toggleDrawer();
-    props.navigation.navigate(selectedRoute.nav, {
-      screen: selectedRoute.routeName,
-    });
+    console.log(filteredMainDrawerRoutes);
+    if (filteredMainDrawerRoutes.routes.length === 1) {
+      const selectedRoute = filteredMainDrawerRoutes.routes[0];
+      props.navigation.toggleDrawer();
+      props.navigation.navigate(selectedRoute.nav, {
+        screen: selectedRoute.routeName,
+      });
+    } else {
+      setMainDrawer(false);
+      setFilteredItems(filteredMainDrawerRoutes);
+    }
   };
 
   const logOut = async () => console.log('log out');
@@ -32,7 +47,7 @@ function CustomDrawerContent(props) {
               key={parent.key}
               testID={parent.key}
               onPress={() => {
-                onItemPress(parent.key);
+                onItemParentPress(parent.key);
               }}>
               <View style={styles.parentItem}>
                 <Text style={[styles.icon, styles.title]}>{parent.title}</Text>
@@ -62,23 +77,40 @@ function CustomDrawerContent(props) {
       <SafeAreaView
         style={styles.container}
         forceInset={{top: 'always', horizontal: 'never'}}>
-        {props.drawerItems?.[0]?.route.nav &&
-        props.drawerItems?.[0]?.route.routeName ? (
-          <TouchableOpacity
-            onPress={() =>
-              props.navigation.navigate(props.drawerItems[0].route.nav, {
-                screen: props.drawerItems[0].route.routeName,
-              })
-            }
-            testID={props.drawerItems[0].route.routeName}
-            style={styles.headerContainer}>
-            <Image
-              source={{uri: 'https://reactjs.org/logo-og.png'}}
-              style={styles.logo}
-            />
-          </TouchableOpacity>
-        ) : null}
-        {renderMainDrawer()}
+        <View style={styles.centered}>
+          <Image
+            source={{uri: 'https://reactjs.org/logo-og.png'}}
+            style={styles.logo}
+          />
+        </View>
+        {mainDrawer ? (
+          renderMainDrawer()
+        ) : (
+          <View>
+            <TouchableOpacity
+              onPress={() => toggleMainDrawer()}
+              style={styles.backButtonRow}>
+              <Text style={[styles.backButtonText, styles.title]}>
+                {'BACK'}
+              </Text>
+            </TouchableOpacity>
+            {filteredItems.routes.map((route) => {
+              return (
+                <TouchableOpacity
+                  key={route.routeName}
+                  testID={route.routeName}
+                  onPress={() =>
+                    props.navigation.navigate(route.nav, {
+                      screen: route.routeName,
+                    })
+                  }
+                  style={styles.item}>
+                  <Text style={styles.title}>{route.title}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        )}
       </SafeAreaView>
     </ScrollView>
   );
@@ -103,6 +135,9 @@ const styles = StyleSheet.create({
     flex: 1,
     zIndex: 1000,
   },
+  centered: {
+    alignItems: 'center',
+  },
   parentItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -116,6 +151,18 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#F0F0F0',
     textAlign: 'center',
+  },
+  backButtonRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingBottom: 17,
+    paddingLeft: 3,
+    borderBottomColor: '#F0F0F0',
+    borderBottomWidth: 1,
+  },
+  backButtonText: {
+    marginLeft: 10,
+    color: '#F0F0F0',
   },
 });
 

@@ -28,10 +28,18 @@ function HomeScreen() {
   );
 }
 
-function SettingsScreen() {
+function Settings1Screen() {
   return (
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <Text>Settings Screen</Text>
+      <Text>Settings 1 Screen</Text>
+    </View>
+  );
+}
+
+function Settings2Screen() {
+  return (
+    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+      <Text>Settings 2 Screen</Text>
     </View>
   );
 }
@@ -44,7 +52,8 @@ function MainDrawerNavigation() {
         <CustomDrawerContent drawerItems={drawerItemsMain} {...props} />
       )}>
       <Drawer.Screen name="Home" component={HomeScreen} />
-      <Drawer.Screen name="Settings" component={SettingsScreen} />
+      <Drawer.Screen name="Settings1" component={Settings1Screen} />
+      <Drawer.Screen name="Settings2" component={Settings2Screen} />
     </Drawer.Navigator>
   );
 }
