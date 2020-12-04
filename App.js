@@ -20,6 +20,14 @@ function HomeScreen() {
   );
 }
 
+function SettingsScreen() {
+  return (
+    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+      <Text>Settings Screen</Text>
+    </View>
+  );
+}
+
 const Stack = createStackNavigator();
 
 const App: () => React$Node = () => {
@@ -27,6 +35,7 @@ const App: () => React$Node = () => {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Settings" component={SettingsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
